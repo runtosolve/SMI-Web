@@ -1,420 +1,246 @@
-import { useState } from 'react'
+import {
+  Card, Collapse, Form, Select, InputNumber, Space, Typography,
+  Divider, Row, Col, Statistic, Tag, Table, Alert
+} from 'antd'
 import CrossSectionGraphic from '../components/CrossSectionGraphic'
 import GeneralArrangementGraphic from '../components/GeneralArrangementGraphic'
 
-const StructureTab = ({ formData, updateFormData }) => {
-  const [collapsed, setCollapsed] = useState({
-    sheeting: false,
-    span: false,
-    concrete: false,
-    mesh: false,
-    stud: false,
-    bar: false
-  })
+const { Text } = Typography
+const { Panel } = Collapse
 
-  const toggleSection = (section) => {
-    setCollapsed(prev => ({ ...prev, [section]: !prev[section] }))
+const LABEL_WIDTH = 170
+
+const StructureTab = ({ formData, updateFormData }) => {
+  const resultItems = [
+    { label: 'Max Unity Factor', value: formData.maxUnityFactor, color: '#1565c0' },
+    { label: 'Normal Stage',     value: formData.normalStage,    color: '#2e7d32' },
+    { label: 'Serviceability',   value: formData.serviceability, color: '#e65100' },
+    { label: 'Fire',             value: formData.fire,           color: '#b71c1c' },
+  ]
+
+  const formProps = {
+    layout: 'horizontal',
+    size: 'small',
+    className: 'mui-form',
+    labelCol: { style: { width: LABEL_WIDTH, textAlign: 'left' } },
+    wrapperCol: { flex: 1 },
+    colon: false,
   }
 
   return (
     <div className="split-container">
-      {/* Left Panel - Form */}
+      {/* Left Panel */}
       <div className="left-panel">
-        {/* Sheeting Section */}
-        <div className="form-section">
-          <div className="section-header">
-            <span>Sheeting</span>
-            <button className="collapse-btn" onClick={() => toggleSection('sheeting')}>
-              {collapsed.sheeting ? '▼' : '▲'}
-            </button>
-          </div>
-          {!collapsed.sheeting && (
-            <div className="section-content">
-              <div className="form-row">
-                <label className="form-label">Profil.:</label>
-                <select 
-                  className="form-select" 
-                  value={formData.profile}
-                  onChange={(e) => updateFormData({ profile: e.target.value })}
-                >
-                  <option>ComFlor 60</option>
-                  <option>ComFlor 80</option>
-                  <option>WH-38-152</option>
-                  <option>2WH-36</option>
-                  <option>3WH-36</option>
-                </select>
-              </div>
-              <div className="form-row">
-                <label className="form-label">Thickn.:</label>
-                <select 
-                  className="form-select"
-                  value={formData.thickness}
-                  onChange={(e) => updateFormData({ thickness: e.target.value })}
-                >
-                  <option>0.75</option>
-                  <option>0.90</option>
-                  <option>1.0</option>
-                  <option>1.2</option>
-                </select>
-                <span className="form-unit">mm</span>
-              </div>
-              <div className="form-row">
-                <label className="form-label">Gra.:</label>
-                <select 
-                  className="form-select"
-                  value={formData.grade}
-                  onChange={(e) => updateFormData({ grade: e.target.value })}
-                >
-                  <option>S280</option>
-                  <option>S350</option>
-                  <option>S450</option>
-                </select>
-              </div>
-            </div>
-          )}
-        </div>
+        <Collapse
+          defaultActiveKey={['sheeting','span','concrete','mesh','stud','bar']}
+          bordered={false}
+          ghost={false}
+          className="mui-collapse"
+        >
+          <Panel header="Sheeting" key="sheeting" className="panel-blue">
+            <Form {...formProps}>
+              <Form.Item label="Profile">
+                <Select value={formData.profile} onChange={v => updateFormData({ profile: v })} style={{ width: 160 }}>
+                  {['ComFlor 60','ComFlor 80','WH-38-152','2WH-36','3WH-36'].map(o => <Select.Option key={o}>{o}</Select.Option>)}
+                </Select>
+              </Form.Item>
+              <Form.Item label="Thickness">
+                <Space>
+                  <Select value={formData.thickness} onChange={v => updateFormData({ thickness: v })} style={{ width: 90 }}>
+                    {['0.75','0.90','1.0','1.2'].map(o => <Select.Option key={o}>{o}</Select.Option>)}
+                  </Select>
+                  <Text type="secondary">mm</Text>
+                </Space>
+              </Form.Item>
+              <Form.Item label="Grade">
+                <Select value={formData.grade} onChange={v => updateFormData({ grade: v })} style={{ width: 90 }}>
+                  {['S280','S350','S450'].map(o => <Select.Option key={o}>{o}</Select.Option>)}
+                </Select>
+              </Form.Item>
+            </Form>
+          </Panel>
 
-        {/* Span Section */}
-        <div className="form-section">
-          <div className="section-header">
-            <span>Span</span>
-            <button className="collapse-btn" onClick={() => toggleSection('span')}>
-              {collapsed.span ? '▼' : '▲'}
-            </button>
-          </div>
-          {!collapsed.span && (
-            <div className="section-content">
-              <div className="form-row">
-                <label className="form-label">Profile span ty.:</label>
-                <select 
-                  className="form-select"
-                  value={formData.spanType}
-                  onChange={(e) => updateFormData({ spanType: e.target.value })}
-                >
-                  <option>Single</option>
-                  <option>Double</option>
-                  <option>Triple</option>
-                </select>
-              </div>
-              <div className="form-row">
-                <label className="form-label">Length sid.:</label>
-                <input 
-                  type="number" 
-                  className="form-input"
-                  value={formData.span1}
-                  onChange={(e) => updateFormData({ span1: e.target.value })}
-                />
-                <span className="form-unit">m</span>
-              </div>
-              <div className="form-row">
-                <label className="form-label">Length sid.:</label>
-                <input 
-                  type="number" 
-                  className="form-input"
-                  value={formData.span2}
-                  onChange={(e) => updateFormData({ span2: e.target.value })}
-                />
-                <span className="form-unit">m</span>
-                <label className="form-label" style={{ marginLeft: '20px' }}>Support w.:</label>
-                <input 
-                  type="number" 
-                  className="form-input"
-                  value={formData.supportWidth}
-                  onChange={(e) => updateFormData({ supportWidth: e.target.value })}
-                />
-                <span className="form-unit">m..</span>
-              </div>
-              <div className="form-row">
-                <label className="form-label">Deck prop.:</label>
-                <select className="form-select">
-                  <option>No Props</option>
-                  <option>1 Prop</option>
-                  <option>2 Props</option>
-                </select>
-                <label className="form-label" style={{ marginLeft: '20px' }}>Deck prop w:</label>
-                <input type="number" className="form-input" defaultValue="100" />
-                <span className="form-unit">m..</span>
-              </div>
-            </div>
-          )}
-        </div>
+          <Panel header="Span" key="span" className="panel-green">
+            <Form {...formProps}>
+              <Form.Item label="Profile Span Type">
+                <Select value={formData.spanType} onChange={v => updateFormData({ spanType: v })} style={{ width: 110 }}>
+                  {['Single','Double','Triple'].map(o => <Select.Option key={o}>{o}</Select.Option>)}
+                </Select>
+              </Form.Item>
+              <Form.Item label="Length (Side 1)">
+                <Space>
+                  <InputNumber value={parseFloat(formData.span1)} onChange={v => updateFormData({ span1: String(v) })} style={{ width: 90 }} step={0.1} />
+                  <Text type="secondary">m</Text>
+                </Space>
+              </Form.Item>
+              <Form.Item label="Length (Side 2)">
+                <Space>
+                  <InputNumber value={parseFloat(formData.span2)} onChange={v => updateFormData({ span2: String(v) })} style={{ width: 90 }} step={0.1} />
+                  <Text type="secondary">m</Text>
+                </Space>
+              </Form.Item>
+              <Form.Item label="Support Width">
+                <Space>
+                  <InputNumber value={parseFloat(formData.supportWidth)} onChange={v => updateFormData({ supportWidth: String(v) })} style={{ width: 90 }} />
+                  <Text type="secondary">mm</Text>
+                </Space>
+              </Form.Item>
+              <Form.Item label="Deck Props">
+                <Select defaultValue="No Props" style={{ width: 110 }}>
+                  {['No Props','1 Prop','2 Props'].map(o => <Select.Option key={o}>{o}</Select.Option>)}
+                </Select>
+              </Form.Item>
+            </Form>
+          </Panel>
 
-        {/* Concrete Section */}
-        <div className="form-section">
-          <div className="section-header">
-            <span>Concrete</span>
-            <button className="collapse-btn" onClick={() => toggleSection('concrete')}>
-              {collapsed.concrete ? '▼' : '▲'}
-            </button>
-          </div>
-          {!collapsed.concrete && (
-            <div className="section-content">
-              <div className="form-row">
-                <label className="form-label">Gra.:</label>
-                <select 
-                  className="form-select"
-                  value={formData.concreteGrade}
-                  onChange={(e) => updateFormData({ concreteGrade: e.target.value })}
-                >
-                  <option>C25</option>
-                  <option>C30</option>
-                  <option>C35</option>
-                  <option>C40</option>
-                </select>
-                <label className="form-label" style={{ marginLeft: '20px' }}>Slab dept.:</label>
-                <input 
-                  type="number" 
-                  className="form-input"
-                  value={formData.slabDepth}
-                  onChange={(e) => updateFormData({ slabDepth: e.target.value })}
-                />
-                <span className="form-unit">mm</span>
-              </div>
-              <div className="form-row">
-                <label className="form-label">Type:</label>
-                <select 
-                  className="form-select"
-                  value={formData.concreteType}
-                  onChange={(e) => updateFormData({ concreteType: e.target.value })}
-                >
-                  <option>Normal Wei</option>
-                  <option>Lightweight</option>
-                </select>
-                <label className="form-label" style={{ marginLeft: '20px' }}>Wet dens.:</label>
-                <input 
-                  type="number" 
-                  className="form-input"
-                  value={formData.wetDensity}
-                  onChange={(e) => updateFormData({ wetDensity: e.target.value })}
-                />
-                <span className="form-unit">kg/..</span>
-              </div>
-              <div className="form-row">
-                <label className="form-label"></label>
-                <label className="form-label" style={{ marginLeft: '168px' }}>Dry densi.:</label>
-                <input 
-                  type="number" 
-                  className="form-input"
-                  value={formData.dryDensity}
-                  onChange={(e) => updateFormData({ dryDensity: e.target.value })}
-                />
-                <span className="form-unit">kg/..</span>
-              </div>
-              <div className="form-row">
-                <label className="form-label">Auto calculate modular ratio:</label>
-                <input type="checkbox" />
-                <label className="form-label" style={{ marginLeft: '20px' }}>Modular r.:</label>
-                <input type="number" className="form-input" defaultValue="10" />
-              </div>
-            </div>
-          )}
-        </div>
+          <Panel header="Concrete" key="concrete" className="panel-orange">
+            <Form {...formProps}>
+              <Form.Item label="Grade">
+                <Select value={formData.concreteGrade} onChange={v => updateFormData({ concreteGrade: v })} style={{ width: 90 }}>
+                  {['C25','C30','C35','C40'].map(o => <Select.Option key={o}>{o}</Select.Option>)}
+                </Select>
+              </Form.Item>
+              <Form.Item label="Type">
+                <Select value={formData.concreteType} onChange={v => updateFormData({ concreteType: v })} style={{ width: 130 }}>
+                  {['Normal Wei','Lightweight'].map(o => <Select.Option key={o}>{o}</Select.Option>)}
+                </Select>
+              </Form.Item>
+              <Form.Item label="Slab Depth">
+                <Space>
+                  <InputNumber value={parseFloat(formData.slabDepth)} onChange={v => updateFormData({ slabDepth: String(v) })} style={{ width: 90 }} />
+                  <Text type="secondary">mm</Text>
+                </Space>
+              </Form.Item>
+              <Form.Item label="Wet Density">
+                <Space>
+                  <InputNumber value={parseFloat(formData.wetDensity)} onChange={v => updateFormData({ wetDensity: String(v) })} style={{ width: 90 }} />
+                  <Text type="secondary">kg/m³</Text>
+                </Space>
+              </Form.Item>
+              <Form.Item label="Dry Density">
+                <Space>
+                  <InputNumber value={parseFloat(formData.dryDensity)} onChange={v => updateFormData({ dryDensity: String(v) })} style={{ width: 90 }} />
+                  <Text type="secondary">kg/m³</Text>
+                </Space>
+              </Form.Item>
+            </Form>
+          </Panel>
 
-        {/* Mesh or Fibre Section */}
-        <div className="form-section">
-          <div className="section-header">
-            <span>Mesh or Fibre</span>
-            <button className="collapse-btn" onClick={() => toggleSection('mesh')}>
-              {collapsed.mesh ? '▼' : '▲'}
-            </button>
-          </div>
-          {!collapsed.mesh && (
-            <div className="section-content">
-              <div className="form-row">
-                <label className="form-label">Mesh or F.:</label>
-                <select className="form-select">
-                  <option>Mesh</option>
-                  <option>Fibre</option>
-                  <option>None</option>
-                </select>
-                <label className="form-label" style={{ marginLeft: '20px' }}>Typ.:</label>
-                <select 
-                  className="form-select"
-                  value={formData.meshType}
-                  onChange={(e) => updateFormData({ meshType: e.target.value })}
-                >
-                  <option>A142</option>
-                  <option>A193</option>
-                  <option>A252</option>
-                  <option>A393</option>
-                </select>
-              </div>
-              <div className="form-row">
-                <label className="form-label">Cov.:</label>
-                <input 
-                  type="number" 
-                  className="form-input"
-                  value={formData.meshCover}
-                  onChange={(e) => updateFormData({ meshCover: e.target.value })}
-                />
-                <span className="form-unit">mm</span>
-                <label className="form-label" style={{ marginLeft: '82px' }}>Yiel.:</label>
-                <input 
-                  type="number" 
-                  className="form-input"
-                  value={formData.meshYield}
-                  onChange={(e) => updateFormData({ meshYield: e.target.value })}
-                />
-                <span className="form-unit">N/m..</span>
-              </div>
-              <div className="form-row">
-                <label className="form-label">Lay.:</label>
-                <select 
-                  className="form-select"
-                  value={formData.meshLayer}
-                  onChange={(e) => updateFormData({ meshLayer: e.target.value })}
-                >
-                  <option>Singl</option>
-                  <option>Double</option>
-                </select>
-              </div>
-            </div>
-          )}
-        </div>
+          <Panel header="Mesh or Fibre" key="mesh" className="panel-purple">
+            <Form {...formProps}>
+              <Form.Item label="Type">
+                <Select defaultValue="Mesh" style={{ width: 90 }}>
+                  {['Mesh','Fibre','None'].map(o => <Select.Option key={o}>{o}</Select.Option>)}
+                </Select>
+              </Form.Item>
+              <Form.Item label="Mesh Type">
+                <Select value={formData.meshType} onChange={v => updateFormData({ meshType: v })} style={{ width: 90 }}>
+                  {['A142','A193','A252','A393'].map(o => <Select.Option key={o}>{o}</Select.Option>)}
+                </Select>
+              </Form.Item>
+              <Form.Item label="Cover">
+                <Space>
+                  <InputNumber value={parseFloat(formData.meshCover)} onChange={v => updateFormData({ meshCover: String(v) })} style={{ width: 90 }} />
+                  <Text type="secondary">mm</Text>
+                </Space>
+              </Form.Item>
+              <Form.Item label="Yield">
+                <Space>
+                  <InputNumber value={parseFloat(formData.meshYield)} onChange={v => updateFormData({ meshYield: String(v) })} style={{ width: 90 }} />
+                  <Text type="secondary">N/mm²</Text>
+                </Space>
+              </Form.Item>
+              <Form.Item label="Layer">
+                <Select value={formData.meshLayer} onChange={v => updateFormData({ meshLayer: v })} style={{ width: 90 }}>
+                  {['Singl','Double'].map(o => <Select.Option key={o}>{o}</Select.Option>)}
+                </Select>
+              </Form.Item>
+            </Form>
+          </Panel>
 
-        {/* Stud Section */}
-        <div className="form-section">
-          <div className="section-header">
-            <span>Stud</span>
-            <button className="collapse-btn" onClick={() => toggleSection('stud')}>
-              {collapsed.stud ? '▼' : '▲'}
-            </button>
-          </div>
-          {!collapsed.stud && (
-            <div className="section-content">
-              <div className="form-row">
-                <label className="form-label">Diamet.:</label>
-                <select className="form-select">
-                  <option>None</option>
-                  <option>12mm</option>
-                  <option>16mm</option>
-                  <option>19mm</option>
-                </select>
-              </div>
-              <div className="form-row">
-                <label className="form-label">Accoun.:</label>
-                <select className="form-select">
-                  <option>No</option>
-                  <option>Yes</option>
-                </select>
-              </div>
-              <div className="form-row">
-                <label className="form-label">No. per.:</label>
-                <input type="number" className="form-input" defaultValue="" />
-              </div>
-            </div>
-          )}
-        </div>
+          <Panel header="Stud" key="stud" className="panel-teal">
+            <Form {...formProps}>
+              <Form.Item label="Diameter">
+                <Select defaultValue="None" style={{ width: 90 }}>
+                  {['None','12mm','16mm','19mm'].map(o => <Select.Option key={o}>{o}</Select.Option>)}
+                </Select>
+              </Form.Item>
+              <Form.Item label="Account for Studs">
+                <Select defaultValue="No" style={{ width: 80 }}>
+                  <Select.Option value="No">No</Select.Option>
+                  <Select.Option value="Yes">Yes</Select.Option>
+                </Select>
+              </Form.Item>
+              <Form.Item label="No. per Trough">
+                <InputNumber style={{ width: 90 }} min={0} />
+              </Form.Item>
+            </Form>
+          </Panel>
 
-        {/* Bar Section */}
-        <div className="form-section">
-          <div className="section-header">
-            <span>Bar</span>
-            <button className="collapse-btn" onClick={() => toggleSection('bar')}>
-              {collapsed.bar ? '▼' : '▲'}
-            </button>
-          </div>
-          {!collapsed.bar && (
-            <div className="section-content">
-              <div className="form-row">
-                <label className="form-label">Diam.:</label>
-                <select className="form-select">
-                  <option>None</option>
-                  <option>8mm</option>
-                  <option>10mm</option>
-                  <option>12mm</option>
-                  <option>16mm</option>
-                  <option>20mm</option>
-                </select>
-              </div>
-              <div className="form-row">
-                <label className="form-label">Yield:</label>
-                <input type="number" className="form-input" defaultValue="460" />
-                <span className="form-unit">N/m..</span>
-              </div>
-              <div className="form-row">
-                <label className="form-label">Axis distan.:</label>
-                <input type="number" className="form-input" defaultValue="30" />
-                <span className="form-unit">mm</span>
-              </div>
-            </div>
-          )}
-        </div>
+          <Panel header="Bar" key="bar" className="panel-red">
+            <Form {...formProps}>
+              <Form.Item label="Diameter">
+                <Select defaultValue="None" style={{ width: 90 }}>
+                  {['None','8mm','10mm','12mm','16mm','20mm'].map(o => <Select.Option key={o}>{o}</Select.Option>)}
+                </Select>
+              </Form.Item>
+              <Form.Item label="Yield">
+                <Space>
+                  <InputNumber defaultValue={460} style={{ width: 90 }} />
+                  <Text type="secondary">N/mm²</Text>
+                </Space>
+              </Form.Item>
+              <Form.Item label="Axis Distance">
+                <Space>
+                  <InputNumber defaultValue={30} style={{ width: 90 }} />
+                  <Text type="secondary">mm</Text>
+                </Space>
+              </Form.Item>
+            </Form>
+          </Panel>
+        </Collapse>
 
-        {/* Results Sum */}
-        <div className="results-sum">
-          <div className="results-grid">
-            <div className="result-item">
-              <span className="result-value">{formData.maxUnityFactor}</span>
-              <span className="result-label">MAX UNITY FACT.:</span>
-            </div>
-            <div className="result-item">
-              <span className="result-value">{formData.maxUnityFactor}</span>
-            </div>
-          </div>
-          <div className="results-grid" style={{ marginTop: '12px' }}>
-            <div className="result-item">
-              <span className="result-label">NORMAL STAGE:</span>
-              <span className="result-value">{formData.normalStage}</span>
-            </div>
-          </div>
-          <div className="results-grid" style={{ marginTop: '8px' }}>
-            <div className="result-item">
-              <span className="result-value">{formData.serviceability}</span>
-            </div>
-          </div>
-          <div className="results-grid" style={{ marginTop: '8px' }}>
-            <div className="result-item">
-              <span className="result-label">FIRE:</span>
-              <span className="result-value">{formData.fire}</span>
-            </div>
-          </div>
-        </div>
+        {/* Results Summary */}
+        <Card size="small" title="Results Summary" style={{ marginTop: 4, borderRadius: 8, boxShadow: '0 1px 3px rgba(0,0,0,0.10)' }}>
+          <Row gutter={[16, 12]}>
+            {resultItems.map(r => (
+              <Col span={12} key={r.label}>
+                <Statistic title={r.label} value={r.value} valueStyle={{ color: r.color, fontSize: 20, fontWeight: 700 }} />
+              </Col>
+            ))}
+          </Row>
+        </Card>
       </div>
 
-      {/* Right Panel - Graphics */}
+      {/* Right Panel */}
       <div className="right-panel">
-        <div className="graphics-section">
-          <div className="graphics-title">Cross Section</div>
+        <Card size="small" title="Cross Section" style={{ marginBottom: 12, borderRadius: 8, boxShadow: '0 1px 3px rgba(0,0,0,0.10)' }}>
           <div className="graphics-container">
             <CrossSectionGraphic formData={formData} />
           </div>
-        </div>
+        </Card>
 
-        <div className="graphics-section">
-          <div className="graphics-title">General Arrangement Graphics</div>
+        <Card size="small" title="General Arrangement" style={{ marginBottom: 12, borderRadius: 8, boxShadow: '0 1px 3px rgba(0,0,0,0.10)' }}>
           <div className="graphics-container">
             <GeneralArrangementGraphic formData={formData} />
           </div>
-        </div>
+        </Card>
 
-        <div className="errors-section">
-          <div className="graphics-title">Errors & Warnings</div>
-          <table className="errors-table">
-            <thead>
-              <tr>
-                <th style={{ width: '40%' }}></th>
-                <th style={{ width: '30%' }}></th>
-                <th style={{ width: '30%' }}></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <Card size="small" title="Errors & Warnings" style={{ marginBottom: 12, borderRadius: 8, boxShadow: '0 1px 3px rgba(0,0,0,0.10)' }}>
+          <Table
+            size="small"
+            dataSource={[]}
+            columns={[
+              { title: 'Type', dataIndex: 'type', key: 'type' },
+              { title: 'Description', dataIndex: 'desc', key: 'desc' },
+              { title: 'Status', dataIndex: 'status', key: 'status' },
+            ]}
+            locale={{ emptyText: 'No errors or warnings' }}
+            pagination={false}
+          />
+        </Card>
 
-        <div className="info-section">
-          <div className="info-title">Info</div>
-          <div className="info-content">
-            <strong>Mesh layer:</strong><br />
-            • Single layer is recommended, if possible
-          </div>
-        </div>
+        <Alert type="info" showIcon message="Mesh Layer Note" description="Single layer is recommended, if possible." />
       </div>
     </div>
   )

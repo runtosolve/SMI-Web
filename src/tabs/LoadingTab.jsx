@@ -1,286 +1,161 @@
-import { useState } from 'react'
+import {
+  Card, Collapse, Form, InputNumber, Space, Typography,
+  Divider, Row, Col, Statistic, Table, Alert
+} from 'antd'
 import LoadingDiagramGraphic from '../components/LoadingDiagramGraphic'
 
-const LoadingTab = ({ formData, updateFormData }) => {
-  const [collapsed, setCollapsed] = useState({
-    udl: false,
-    parallel: false,
-    perpendicular: false,
-    point: false
-  })
+const { Text } = Typography
+const { Panel } = Collapse
 
-  const toggleSection = (section) => {
-    setCollapsed(prev => ({ ...prev, [section]: !prev[section] }))
+const LABEL_WIDTH = 170
+
+const emptyLoadsText = { emptyText: 'No loads defined' }
+
+const parallelColumns = [
+  { title: 'No', dataIndex: 'no', key: 'no', width: 40 },
+  { title: 'Dead (kN/m²)', dataIndex: 'dead', key: 'dead' },
+  { title: 'Live (kN/m²)', dataIndex: 'live', key: 'live' },
+  { title: 'Width (mm)', dataIndex: 'width', key: 'width' },
+  { title: 'Start (m)', dataIndex: 'start', key: 'start' },
+  { title: 'End (m)', dataIndex: 'end', key: 'end' },
+]
+
+const perpColumns = [
+  { title: 'No', dataIndex: 'no', key: 'no', width: 40 },
+  { title: 'Dead (kN/m²)', dataIndex: 'dead', key: 'dead' },
+  { title: 'Live (kN/m²)', dataIndex: 'live', key: 'live' },
+  { title: 'Width (mm)', dataIndex: 'width', key: 'width' },
+  { title: 'Location (mm)', dataIndex: 'loc', key: 'loc' },
+]
+
+const pointColumns = [
+  { title: 'No', dataIndex: 'no', key: 'no', width: 40 },
+  { title: 'Dead (kN)', dataIndex: 'dead', key: 'dead' },
+  { title: 'Live (kN)', dataIndex: 'live', key: 'live' },
+  { title: 'Width (mm)', dataIndex: 'width', key: 'width' },
+  { title: 'Length (mm)', dataIndex: 'length', key: 'length' },
+  { title: 'Location (m)', dataIndex: 'loc', key: 'loc' },
+]
+
+const LoadingTab = ({ formData, updateFormData }) => {
+  const resultItems = [
+    { label: 'Max Unity Factor', value: formData.maxUnityFactor, color: '#1565c0' },
+    { label: 'Normal Stage',     value: formData.normalStage,    color: '#2e7d32' },
+    { label: 'Serviceability',   value: formData.serviceability, color: '#e65100' },
+    { label: 'Fire',             value: formData.fire,           color: '#b71c1c' },
+  ]
+
+  const formProps = {
+    layout: 'horizontal',
+    size: 'small',
+    className: 'mui-form',
+    labelCol: { style: { width: LABEL_WIDTH, textAlign: 'left' } },
+    wrapperCol: { flex: 1 },
+    colon: false,
   }
 
   return (
     <div className="split-container">
-      {/* Left Panel - Form */}
+      {/* Left Panel */}
       <div className="left-panel">
-        {/* UDL Loading Section */}
-        <div className="form-section">
-          <div className="section-header">
-            <span>UDL Loading</span>
-            <button className="collapse-btn" onClick={() => toggleSection('udl')}>
-              {collapsed.udl ? '▼' : '▲'}
-            </button>
-          </div>
-          {!collapsed.udl && (
-            <div className="section-content">
-              <div className="form-row">
-                <label className="form-label">Imposed:</label>
-                <input 
-                  type="number" 
-                  className="form-input"
-                  value={formData.imposed}
-                  onChange={(e) => updateFormData({ imposed: e.target.value })}
-                />
-                <span className="form-unit">kN/m²</span>
-                <label className="form-label" style={{ marginLeft: '40px' }}>Screed de.:</label>
-                <input 
-                  type="number" 
-                  className="form-input"
-                  value={formData.screedDepth}
-                  onChange={(e) => updateFormData({ screedDepth: e.target.value })}
-                />
-                <span className="form-unit">mm</span>
-              </div>
-              <div className="form-row">
-                <label className="form-label">Ceiling /Serv.:</label>
-                <input 
-                  type="number" 
-                  className="form-input"
-                  value={formData.ceiling}
-                  onChange={(e) => updateFormData({ ceiling: e.target.value })}
-                />
-                <span className="form-unit">kN/m²</span>
-                <label className="form-label" style={{ marginLeft: '40px' }}>Screed de.:</label>
-                <input 
-                  type="number" 
-                  className="form-input"
-                  value={formData.screedDensity}
-                  onChange={(e) => updateFormData({ screedDensity: e.target.value })}
-                />
-                <span className="form-unit">kg/m³</span>
-              </div>
-              <div className="form-row">
-                <label className="form-label">Finishes:</label>
-                <input 
-                  type="number" 
-                  className="form-input"
-                  value={formData.finishes}
-                  onChange={(e) => updateFormData({ finishes: e.target.value })}
-                />
-                <span className="form-unit">kN/m²</span>
-              </div>
-              <div className="form-row">
-                <label className="form-label">Partitions:</label>
-                <input 
-                  type="number" 
-                  className="form-input"
-                  value={formData.partitions}
-                  onChange={(e) => updateFormData({ partitions: e.target.value })}
-                />
-                <span className="form-unit">kN/m²</span>
-              </div>
-            </div>
-          )}
-        </div>
+        <Collapse
+          defaultActiveKey={['udl','parallel','perpendicular','point']}
+          bordered={false}
+          className="mui-collapse"
+        >
+          <Panel header="UDL Loading" key="udl" className="panel-blue">
+            <Form {...formProps}>
+              <Form.Item label="Imposed">
+                <Space>
+                  <InputNumber value={parseFloat(formData.imposed)} onChange={v => updateFormData({ imposed: String(v) })} style={{ width: 90 }} step={0.5} />
+                  <Text type="secondary">kN/m²</Text>
+                </Space>
+              </Form.Item>
+              <Form.Item label="Ceiling / Services">
+                <Space>
+                  <InputNumber value={parseFloat(formData.ceiling)} onChange={v => updateFormData({ ceiling: String(v) })} style={{ width: 90 }} step={0.1} />
+                  <Text type="secondary">kN/m²</Text>
+                </Space>
+              </Form.Item>
+              <Form.Item label="Finishes">
+                <Space>
+                  <InputNumber value={parseFloat(formData.finishes)} onChange={v => updateFormData({ finishes: String(v) })} style={{ width: 90 }} step={0.1} />
+                  <Text type="secondary">kN/m²</Text>
+                </Space>
+              </Form.Item>
+              <Form.Item label="Partitions">
+                <Space>
+                  <InputNumber value={parseFloat(formData.partitions)} onChange={v => updateFormData({ partitions: String(v) })} style={{ width: 90 }} step={0.1} />
+                  <Text type="secondary">kN/m²</Text>
+                </Space>
+              </Form.Item>
+              <Form.Item label="Screed Depth">
+                <Space>
+                  <InputNumber value={parseFloat(formData.screedDepth)} onChange={v => updateFormData({ screedDepth: String(v) })} style={{ width: 90 }} />
+                  <Text type="secondary">mm</Text>
+                </Space>
+              </Form.Item>
+              <Form.Item label="Screed Density">
+                <Space>
+                  <InputNumber value={parseFloat(formData.screedDensity)} onChange={v => updateFormData({ screedDensity: String(v) })} style={{ width: 90 }} />
+                  <Text type="secondary">kg/m³</Text>
+                </Space>
+              </Form.Item>
+            </Form>
+          </Panel>
 
-        {/* Parallel Loading Section */}
-        <div className="form-section">
-          <div className="section-header">
-            <span>Parallel Loading</span>
-            <button className="collapse-btn" onClick={() => toggleSection('parallel')}>
-              {collapsed.parallel ? '▼' : '▲'}
-            </button>
-          </div>
-          {!collapsed.parallel && (
-            <div className="section-content">
-              <div className="form-row">
-                <label className="form-label">Number of parallel load.:</label>
-                <input 
-                  type="number" 
-                  className="form-input"
-                  defaultValue="0"
-                  style={{ width: '60px' }}
-                />
-              </div>
-              <table className="loads-table">
-                <thead>
-                  <tr>
-                    <th>No</th>
-                    <th>Superimposed dead component</th>
-                    <th>Live component (</th>
-                    <th>Width (mm)</th>
-                    <th>Start distance (m</th>
-                    <th>End distance (</th>
-                    <th>Thickness of finishes (</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td colSpan="7" style={{ textAlign: 'center', color: '#999' }}>
-                      No loads defined
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+          <Panel header="Parallel Loading" key="parallel" className="panel-green">
+            <Table size="small" dataSource={formData.parallelLoads} columns={parallelColumns} locale={emptyLoadsText} pagination={false} />
+          </Panel>
 
-        {/* Perpendicular Loading Section */}
-        <div className="form-section">
-          <div className="section-header">
-            <span>Perpendicular Loading</span>
-            <button className="collapse-btn" onClick={() => toggleSection('perpendicular')}>
-              {collapsed.perpendicular ? '▼' : '▲'}
-            </button>
-          </div>
-          {!collapsed.perpendicular && (
-            <div className="section-content">
-              <div className="form-row">
-                <label className="form-label">Number of perpendicul.:</label>
-                <input 
-                  type="number" 
-                  className="form-input"
-                  defaultValue="0"
-                  style={{ width: '60px' }}
-                />
-              </div>
-              <table className="loads-table">
-                <thead>
-                  <tr>
-                    <th>No</th>
-                    <th>Superimposed dead component</th>
-                    <th>Live component (</th>
-                    <th>Width (mm)</th>
-                    <th>Thickness of finishes (m</th>
-                    <th>Location of load (mm)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td colSpan="6" style={{ textAlign: 'center', color: '#999' }}>
-                      No loads defined
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+          <Panel header="Perpendicular Loading" key="perpendicular" className="panel-purple">
+            <Table size="small" dataSource={formData.perpendicularLoads} columns={perpColumns} locale={emptyLoadsText} pagination={false} />
+          </Panel>
 
-        {/* Point Loading Section */}
-        <div className="form-section">
-          <div className="section-header">
-            <span>Point Loading</span>
-            <button className="collapse-btn" onClick={() => toggleSection('point')}>
-              {collapsed.point ? '▼' : '▲'}
-            </button>
-          </div>
-          {!collapsed.point && (
-            <div className="section-content">
-              <div className="form-row">
-                <label className="form-label">Number of point loa.:</label>
-                <input 
-                  type="number" 
-                  className="form-input"
-                  defaultValue="0"
-                  style={{ width: '60px' }}
-                />
-              </div>
-              <table className="loads-table">
-                <thead>
-                  <tr>
-                    <th>No</th>
-                    <th>Superimposed dead component</th>
-                    <th>Live component (</th>
-                    <th>Width (mm)</th>
-                    <th>Length (mm)</th>
-                    <th>Location of load (m</th>
-                    <th>Thickness of finishes (</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td colSpan="7" style={{ textAlign: 'center', color: '#999' }}>
-                      No loads defined
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+          <Panel header="Point Loading" key="point" className="panel-orange">
+            <Table size="small" dataSource={formData.pointLoads} columns={pointColumns} locale={emptyLoadsText} pagination={false} />
+          </Panel>
+        </Collapse>
 
-        {/* Results Sum */}
-        <div className="results-sum">
-          <div className="results-grid">
-            <div className="result-item">
-              <span className="result-value">{formData.maxUnityFactor}</span>
-              <span className="result-label">MAX UNITY FACT.:</span>
-            </div>
-            <div className="result-item">
-              <span className="result-value">{formData.maxUnityFactor}</span>
-            </div>
-          </div>
-          <div className="results-grid" style={{ marginTop: '12px' }}>
-            <div className="result-item">
-              <span className="result-label">NORMAL STAGE:</span>
-              <span className="result-value">{formData.normalStage}</span>
-            </div>
-          </div>
-          <div className="results-grid" style={{ marginTop: '8px' }}>
-            <div className="result-item">
-              <span className="result-value">{formData.serviceability}</span>
-            </div>
-          </div>
-          <div className="results-grid" style={{ marginTop: '8px' }}>
-            <div className="result-item">
-              <span className="result-label">FIRE:</span>
-              <span className="result-value">{formData.fire}</span>
-            </div>
-          </div>
-        </div>
+        {/* Results Summary */}
+        <Card size="small" title="Results Summary" style={{ marginTop: 4, borderRadius: 8, boxShadow: '0 1px 3px rgba(0,0,0,0.10)' }}>
+          <Row gutter={[16, 12]}>
+            {resultItems.map(r => (
+              <Col span={12} key={r.label}>
+                <Statistic title={r.label} value={r.value} valueStyle={{ color: r.color, fontSize: 20, fontWeight: 700 }} />
+              </Col>
+            ))}
+          </Row>
+        </Card>
       </div>
 
-      {/* Right Panel - Graphics */}
+      {/* Right Panel */}
       <div className="right-panel">
-        <div className="graphics-section">
-          <div className="graphics-title">Loading Diagram</div>
+        <Card size="small" title="Loading Diagram" style={{ marginBottom: 12, borderRadius: 8, boxShadow: '0 1px 3px rgba(0,0,0,0.10)' }}>
           <div className="graphics-container">
             <LoadingDiagramGraphic formData={formData} />
           </div>
-        </div>
+        </Card>
 
-        <div className="errors-section">
-          <div className="graphics-title">Errors & Warnings</div>
-          <table className="errors-table">
-            <thead>
-              <tr>
-                <th style={{ width: '40%' }}></th>
-                <th style={{ width: '30%' }}></th>
-                <th style={{ width: '30%' }}></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <Card size="small" title="Errors & Warnings" style={{ marginBottom: 12, borderRadius: 8, boxShadow: '0 1px 3px rgba(0,0,0,0.10)' }}>
+          <Table
+            size="small"
+            dataSource={[]}
+            columns={[
+              { title: 'Type', dataIndex: 'type', key: 'type' },
+              { title: 'Description', dataIndex: 'desc', key: 'desc' },
+            ]}
+            locale={{ emptyText: 'No errors or warnings' }}
+            pagination={false}
+          />
+        </Card>
 
-        <div className="info-section">
-          <div className="info-title">Width of point load:</div>
-          <div className="info-content">
-            • Width of point load perpendicular to span
-          </div>
-        </div>
+        <Alert
+          type="info"
+          showIcon
+          message="Point Load Width"
+          description="Width of point load is measured perpendicular to the span direction."
+        />
       </div>
     </div>
   )

@@ -1,249 +1,188 @@
-import { useState } from 'react'
+import {
+  Card, Collapse, Form, Select, InputNumber, Space, Typography,
+  Row, Col, Statistic, Table, Alert
+} from 'antd'
 import CrossSectionGraphic from '../components/CrossSectionGraphic'
 import GeneralArrangementGraphic from '../components/GeneralArrangementGraphic'
 
-const DesignTab = ({ formData, updateFormData }) => {
-  const [collapsed, setCollapsed] = useState({
-    fire: false,
-    deflection: false,
-    partial: false,
-    shear: false,
-    vibration: false
-  })
+const { Text } = Typography
+const { Panel } = Collapse
 
-  const toggleSection = (section) => {
-    setCollapsed(prev => ({ ...prev, [section]: !prev[section] }))
+const LABEL_WIDTH = 200
+
+const DesignTab = ({ formData, updateFormData }) => {
+  const resultItems = [
+    { label: 'Max Unity Factor', value: formData.maxUnityFactor, color: '#1565c0' },
+    { label: 'Normal Stage',     value: formData.normalStage,    color: '#2e7d32' },
+    { label: 'Serviceability',   value: formData.serviceability, color: '#e65100' },
+    { label: 'Fire',             value: formData.fire,           color: '#b71c1c' },
+  ]
+
+  const formProps = {
+    layout: 'horizontal',
+    size: 'small',
+    className: 'mui-form',
+    labelCol: { style: { width: LABEL_WIDTH, textAlign: 'left' } },
+    wrapperCol: { flex: 1 },
+    colon: false,
   }
+
+  const deflLimits = [
+    { key: '1', condition: 'Construction (no ponding)', span: 180, or: 20 },
+    { key: '2', condition: 'Construction stage',        span: 130, or: 30 },
+    { key: '3', condition: 'Imposed loads',             span: 350, or: 20 },
+    { key: '4', condition: 'Total loads',               span: 250, or: 30 },
+  ]
 
   return (
     <div className="split-container">
-      {/* Left Panel - Form */}
+      {/* Left Panel */}
       <div className="left-panel">
-        {/* Fire design Section */}
-        <div className="form-section">
-          <div className="section-header">
-            <span>Fire design</span>
-            <button className="collapse-btn" onClick={() => toggleSection('fire')}>
-              {collapsed.fire ? '▼' : '▲'}
-            </button>
-          </div>
-          {!collapsed.fire && (
-            <div className="section-content">
-              <div className="form-row">
-                <label className="form-label">Design method:</label>
-                <select className="form-select">
-                  <option>Simple</option>
-                  <option>Advanced</option>
-                </select>
-              </div>
-              <div className="form-row">
-                <label className="form-label">Fire resistance p.:</label>
-                <select className="form-select">
-                  <option>60</option>
-                  <option>90</option>
-                  <option>120</option>
-                  <option>180</option>
-                </select>
-              </div>
-              <div className="form-row">
-                <label className="form-label">Proportion of live.:</label>
-                <input type="number" className="form-input" defaultValue="0" />
-                <span className="form-unit">%</span>
-              </div>
-            </div>
-          )}
-        </div>
+        <Collapse
+          defaultActiveKey={['fire','shear','deflection','partial','vibration']}
+          bordered={false}
+          className="mui-collapse"
+        >
+          <Panel header="Fire Design" key="fire" className="panel-red">
+            <Form {...formProps}>
+              <Form.Item label="Design Method">
+                <Select defaultValue="Simple" style={{ width: 110 }}>
+                  <Select.Option value="Simple">Simple</Select.Option>
+                  <Select.Option value="Advanced">Advanced</Select.Option>
+                </Select>
+              </Form.Item>
+              <Form.Item label="Fire Resistance Period">
+                <Space>
+                  <Select defaultValue="120" style={{ width: 80 }}>
+                    {['60','90','120','180'].map(o => <Select.Option key={o}>{o}</Select.Option>)}
+                  </Select>
+                  <Text type="secondary">min</Text>
+                </Space>
+              </Form.Item>
+              <Form.Item label="Proportion of Live Load">
+                <Space>
+                  <InputNumber defaultValue={0} min={0} max={100} style={{ width: 80 }} />
+                  <Text type="secondary">%</Text>
+                </Space>
+              </Form.Item>
+            </Form>
+          </Panel>
 
-        {/* Shear method Section */}
-        <div className="form-section">
-          <div className="section-header">
-            <span>Shear method</span>
-            <button className="collapse-btn" onClick={() => toggleSection('shear')}>
-              {collapsed.shear ? '▼' : '▲'}
-            </button>
-          </div>
-          {!collapsed.shear && (
-            <div className="section-content">
-              <div className="form-row">
-                <label className="form-label">Design met.:</label>
-                <select className="form-select">
-                  <option>m&k</option>
-                  <option>Partial</option>
-                </select>
-              </div>
-            </div>
-          )}
-        </div>
+          <Panel header="Shear Method" key="shear" className="panel-orange">
+            <Form {...formProps}>
+              <Form.Item label="Design Method">
+                <Select defaultValue="m&k" style={{ width: 110 }}>
+                  <Select.Option value="m&k">m &amp; k</Select.Option>
+                  <Select.Option value="Partial">Partial</Select.Option>
+                </Select>
+              </Form.Item>
+            </Form>
+          </Panel>
 
-        {/* Deflection limit Section */}
-        <div className="form-section">
-          <div className="section-header">
-            <span>Deflection limit</span>
-            <button className="collapse-btn" onClick={() => toggleSection('deflection')}>
-              {collapsed.deflection ? '▼' : '▲'}
-            </button>
-          </div>
-          {!collapsed.deflection && (
-            <div className="section-content">
-              <div className="form-row">
-                <label className="form-label">Construction stage(no pon.:</label>
-                <span>sp.:</span>
-                <input type="number" className="form-input" defaultValue="180" style={{ width: '60px' }} />
-                <span>Or</span>
-                <input type="number" className="form-input" defaultValue="20" style={{ width: '60px' }} />
-                <span className="form-unit">m..</span>
-              </div>
-              <div className="form-row">
-                <label className="form-label">Construction stage :</label>
-                <span>sp.:</span>
-                <input type="number" className="form-input" defaultValue="130" style={{ width: '60px' }} />
-                <span>Or</span>
-                <input type="number" className="form-input" defaultValue="30" style={{ width: '60px' }} />
-                <span className="form-unit">m..</span>
-              </div>
-              <div className="form-row">
-                <label className="form-label">Imposed loads :</label>
-                <span>sp.:</span>
-                <input type="number" className="form-input" defaultValue="350" style={{ width: '60px' }} />
-                <span>Or</span>
-                <input type="number" className="form-input" defaultValue="20" style={{ width: '60px' }} />
-                <span className="form-unit">m..</span>
-              </div>
-              <div className="form-row">
-                <label className="form-label">Total loads:</label>
-                <span>sp.:</span>
-                <input type="number" className="form-input" defaultValue="250" style={{ width: '60px' }} />
-                <span>Or</span>
-                <input type="number" className="form-input" defaultValue="30" style={{ width: '60px' }} />
-                <span className="form-unit">m..</span>
-              </div>
-            </div>
-          )}
-        </div>
+          <Panel header="Deflection Limits" key="deflection" className="panel-green">
+            <Table
+              size="small"
+              dataSource={deflLimits}
+              pagination={false}
+              columns={[
+                { title: 'Condition', dataIndex: 'condition', key: 'condition', width: '50%' },
+                {
+                  title: 'Span / N',
+                  dataIndex: 'span',
+                  key: 'span',
+                  render: v => <InputNumber defaultValue={v} style={{ width: 70 }} size="small" />,
+                },
+                {
+                  title: 'Or (mm)',
+                  dataIndex: 'or',
+                  key: 'or',
+                  render: v => <InputNumber defaultValue={v} style={{ width: 70 }} size="small" />,
+                },
+              ]}
+            />
+          </Panel>
 
-        {/* Partial load factors Section */}
-        <div className="form-section">
-          <div className="section-header">
-            <span>Partial load factors</span>
-            <button className="collapse-btn" onClick={() => toggleSection('partial')}>
-              {collapsed.partial ? '▼' : '▲'}
-            </button>
-          </div>
-          {!collapsed.partial && (
-            <div className="section-content">
-              <div className="form-row">
-                <label className="form-label">Dead loads:</label>
-                <input type="number" className="form-input" defaultValue="1.4" step="0.1" />
-                <label className="form-label" style={{ marginLeft: '20px' }}>Fi.:</label>
-                <input type="number" className="form-input" defaultValue="0.8" step="0.1" />
-              </div>
-              <div className="form-row">
-                <label className="form-label">Imposed loads:</label>
-                <input type="number" className="form-input" defaultValue="1.6" step="0.1" />
-              </div>
-              <div className="form-row">
-                <label className="form-label">Super imposed dead.:</label>
-                <input type="number" className="form-input" defaultValue="1.4" step="0.1" />
-              </div>
-            </div>
-          )}
-        </div>
+          <Panel header="Partial Load Factors" key="partial" className="panel-blue">
+            <Form {...formProps}>
+              <Form.Item label="Dead Loads">
+                <InputNumber defaultValue={1.4} step={0.1} style={{ width: 90 }} />
+              </Form.Item>
+              <Form.Item label="Imposed Loads">
+                <InputNumber defaultValue={1.6} step={0.1} style={{ width: 90 }} />
+              </Form.Item>
+              <Form.Item label="Super-imposed Dead">
+                <InputNumber defaultValue={1.4} step={0.1} style={{ width: 90 }} />
+              </Form.Item>
+              <Form.Item label="fi">
+                <InputNumber defaultValue={0.8} step={0.1} style={{ width: 90 }} />
+              </Form.Item>
+            </Form>
+          </Panel>
 
-        {/* Vibration Section */}
-        <div className="form-section">
-          <div className="section-header">
-            <span>Vibration</span>
-            <button className="collapse-btn" onClick={() => toggleSection('vibration')}>
-              {collapsed.vibration ? '▼' : '▲'}
-            </button>
-          </div>
-          {!collapsed.vibration && (
-            <div className="section-content">
-              <div className="form-row">
-                <label className="form-label">Natural frequenc.:</label>
-                <input type="number" className="form-input" defaultValue="5" />
-                <span className="form-unit">H</span>
-              </div>
-            </div>
-          )}
-        </div>
+          <Panel header="Vibration" key="vibration" className="panel-teal">
+            <Form {...formProps}>
+              <Form.Item label="Natural Frequency Limit">
+                <Space>
+                  <InputNumber defaultValue={5} style={{ width: 90 }} />
+                  <Text type="secondary">Hz</Text>
+                </Space>
+              </Form.Item>
+            </Form>
+          </Panel>
+        </Collapse>
 
-        {/* Results Sum */}
-        <div className="results-sum">
-          <div className="results-grid">
-            <div className="result-item">
-              <span className="result-value">{formData.maxUnityFactor}</span>
-              <span className="result-label">MAX UNITY FACT.:</span>
-            </div>
-            <div className="result-item">
-              <span className="result-value">{formData.maxUnityFactor}</span>
-            </div>
-          </div>
-          <div className="results-grid" style={{ marginTop: '12px' }}>
-            <div className="result-item">
-              <span className="result-label">NORMAL STAGE:</span>
-              <span className="result-value">{formData.normalStage}</span>
-            </div>
-          </div>
-          <div className="results-grid" style={{ marginTop: '8px' }}>
-            <div className="result-item">
-              <span className="result-value">{formData.serviceability}</span>
-            </div>
-          </div>
-          <div className="results-grid" style={{ marginTop: '8px' }}>
-            <div className="result-item">
-              <span className="result-label">FIRE:</span>
-              <span className="result-value">{formData.fire}</span>
-            </div>
-          </div>
-        </div>
+        {/* Results Summary */}
+        <Card size="small" title="Results Summary" style={{ marginTop: 4, borderRadius: 8, boxShadow: '0 1px 3px rgba(0,0,0,0.10)' }}>
+          <Row gutter={[16, 12]}>
+            {resultItems.map(r => (
+              <Col span={12} key={r.label}>
+                <Statistic title={r.label} value={r.value} valueStyle={{ color: r.color, fontSize: 20, fontWeight: 700 }} />
+              </Col>
+            ))}
+          </Row>
+        </Card>
       </div>
 
-      {/* Right Panel - Graphics */}
+      {/* Right Panel */}
       <div className="right-panel">
-        <div className="graphics-section">
-          <div className="graphics-title">Cross Section</div>
+        <Card size="small" title="Cross Section" style={{ marginBottom: 12, borderRadius: 8, boxShadow: '0 1px 3px rgba(0,0,0,0.10)' }}>
           <div className="graphics-container">
             <CrossSectionGraphic formData={formData} />
           </div>
-        </div>
+        </Card>
 
-        <div className="graphics-section">
-          <div className="graphics-title">General Arrangement Graphics</div>
+        <Card size="small" title="General Arrangement" style={{ marginBottom: 12, borderRadius: 8, boxShadow: '0 1px 3px rgba(0,0,0,0.10)' }}>
           <div className="graphics-container">
             <GeneralArrangementGraphic formData={formData} />
           </div>
-        </div>
+        </Card>
 
-        <div className="errors-section">
-          <div className="graphics-title">Errors & Warnings</div>
-          <table className="errors-table">
-            <thead>
-              <tr>
-                <th style={{ width: '40%' }}></th>
-                <th style={{ width: '30%' }}></th>
-                <th style={{ width: '30%' }}></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-                <td>&nbsp;</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <Card size="small" title="Errors & Warnings" style={{ marginBottom: 12, borderRadius: 8, boxShadow: '0 1px 3px rgba(0,0,0,0.10)' }}>
+          <Table
+            size="small"
+            dataSource={[]}
+            columns={[
+              { title: 'Type', dataIndex: 'type', key: 'type' },
+              { title: 'Description', dataIndex: 'desc', key: 'desc' },
+            ]}
+            locale={{ emptyText: 'No errors or warnings' }}
+            pagination={false}
+          />
+        </Card>
 
-        <div className="info-section">
-          <div className="info-title">Fire loading partial safety factor:</div>
-          <div className="info-content">
-            • Applicable to (0.6 * Q + 1.0 for permanent loads) (1.0 for permanent beds)<br />
-            • Program default is conservative<br />
-            • For environments other than escape stairs and lobbies BS5950 permits 0.8<br />
-            • For general office environments BS5950 permits 0.5
-          </div>
-        </div>
+        <Alert
+          type="info"
+          showIcon
+          message="Fire Loading Partial Safety Factor"
+          description={
+            <ul style={{ margin: 0, paddingLeft: 16 }}>
+              <li>Applicable to (0.6 × Q + 1.0 for permanent loads)</li>
+              <li>Program default is conservative</li>
+              <li>BS5950 permits 0.8 for non-escape stair environments</li>
+              <li>BS5950 permits 0.5 for general office environments</li>
+            </ul>
+          }
+        />
       </div>
     </div>
   )
