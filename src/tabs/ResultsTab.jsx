@@ -1,4 +1,4 @@
-import { Card, Row, Col, Descriptions, Tag, Alert, Typography } from 'antd'
+import { Card, Descriptions, Tag, Alert, Typography } from 'antd'
 import { CheckCircleOutlined } from '@ant-design/icons'
 import BendingMomentDiagram from '../components/BendingMomentDiagram'
 import ShearDiagram from '../components/ShearDiagram'
@@ -9,6 +9,9 @@ const { Title } = Typography
 const PassTag = () => <Tag icon={<CheckCircleOutlined />} color="success">PASS</Tag>
 const SatTag = () => <Tag icon={<CheckCircleOutlined />} color="cyan">SATISFACTORY</Tag>
 
+const LABEL_STYLE = { width: 260, minWidth: 260, fontWeight: 500 }
+const DESC_PROPS = { column: 1, size: 'small', bordered: true, labelStyle: LABEL_STYLE }
+
 const ResultsTab = ({ formData }) => {
   return (
     <div className="split-container">
@@ -16,14 +19,14 @@ const ResultsTab = ({ formData }) => {
       <div className="left-panel">
         <Card size="small" title="Analysis Results" style={{ marginBottom: 16 }}>
           <Title level={5} style={{ marginTop: 0 }}>Construction Stage</Title>
-          <Descriptions column={1} size="small" bordered>
+          <Descriptions {...DESC_PROPS}>
             <Descriptions.Item label="Max Unity Factor">
               <span style={{ marginRight: 8 }}>0.85</span><PassTag />
             </Descriptions.Item>
           </Descriptions>
 
           <Title level={5} style={{ marginTop: 16 }}>Normal Stage</Title>
-          <Descriptions column={1} size="small" bordered>
+          <Descriptions {...DESC_PROPS}>
             <Descriptions.Item label="Max Unity Factor">
               <span style={{ marginRight: 8 }}>0.55</span><PassTag />
             </Descriptions.Item>
@@ -39,7 +42,7 @@ const ResultsTab = ({ formData }) => {
           </Descriptions>
 
           <Title level={5} style={{ marginTop: 16 }}>Fire Condition</Title>
-          <Descriptions column={1} size="small" bordered>
+          <Descriptions {...DESC_PROPS}>
             <Descriptions.Item label="Unity Factor">
               <span style={{ marginRight: 8 }}>0.85</span><PassTag />
             </Descriptions.Item>
@@ -47,7 +50,7 @@ const ResultsTab = ({ formData }) => {
           </Descriptions>
 
           <Title level={5} style={{ marginTop: 16 }}>Serviceability</Title>
-          <Descriptions column={1} size="small" bordered>
+          <Descriptions {...DESC_PROPS}>
             <Descriptions.Item label="Deflection Check">
               <span style={{ marginRight: 8 }}>3.7 mm</span><SatTag />
             </Descriptions.Item>
@@ -63,7 +66,7 @@ const ResultsTab = ({ formData }) => {
         </Card>
 
         <Card size="small" title="Report Summary">
-          <Descriptions column={1} size="small" bordered>
+          <Descriptions {...DESC_PROPS}>
             <Descriptions.Item label="Construction Stage"><PassTag /></Descriptions.Item>
             <Descriptions.Item label="Normal Stage">
               <PassTag /> <span style={{ marginLeft: 8, color: '#555' }}>Max Unity Factor: 0.55</span>

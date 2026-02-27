@@ -60,7 +60,7 @@
 }
 
 .mui-collapse .ant-collapse-content-box {
-  padding: 14px 16px !important;
+  padding: 20px 16px 14px !important;
 }
 
 /* ─── Per-panel accent colours ───────────────────────────────────── */
@@ -72,6 +72,10 @@
 .panel-red    .ant-collapse-header { background: #ffebee; border-left: 4px solid #b71c1c; }
 .panel-indigo .ant-collapse-header { background: #e8eaf6; border-left: 4px solid #283593; }
 .panel-brown  .ant-collapse-header { background: #efebe9; border-left: 4px solid #4e342e; }
+
+.ant-collapse-body{
+  margin-top: 10px;
+}
 
 /* ─── Form alignment ─────────────────────────────────────────────── */
 .mui-form.ant-form-horizontal .ant-form-item {

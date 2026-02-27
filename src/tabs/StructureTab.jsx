@@ -41,7 +41,7 @@ const StructureTab = ({ formData, updateFormData }) => {
             <Form {...formProps}>
               <Form.Item label="Profile">
                 <Select value={formData.profile} onChange={v => updateFormData({ profile: v })} style={{ width: 160 }}>
-                  {['ComFlor 60','ComFlor 80','WH-38-152','2WH-36','3WH-36'].map(o => <Select.Option key={o}>{o}</Select.Option>)}
+                  {['WH-38-152','2WH-36','3WH-36'].map(o => <Select.Option key={o}>{o}</Select.Option>)}
                 </Select>
               </Form.Item>
               <Form.Item label="Thickness">
@@ -53,8 +53,8 @@ const StructureTab = ({ formData, updateFormData }) => {
                 </Space>
               </Form.Item>
               <Form.Item label="Grade">
-                <Select value={formData.grade} onChange={v => updateFormData({ grade: v })} style={{ width: 90 }}>
-                  {['S280','S350','S450'].map(o => <Select.Option key={o}>{o}</Select.Option>)}
+                <Select value={formData.grade} onChange={v => updateFormData({ grade: v })} style={{ width: 220 }}>
+                  <Select.Option value="ASTM A653 SS Grade 50/1">ASTM A653 SS Grade 50/1</Select.Option>
                 </Select>
               </Form.Item>
             </Form>

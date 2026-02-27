@@ -1,10 +1,8 @@
 import { useState } from 'react'
 import { ConfigProvider, Layout, Tabs, Button, Space, theme } from 'antd'
 import {
-  FolderOpenOutlined,
-  SettingOutlined,
-  BarChartOutlined,
-  QuestionCircleOutlined
+  ThunderboltOutlined,
+  FilePdfOutlined,
 } from '@ant-design/icons'
 import './App.css'
 import StructureTab from './tabs/StructureTab'
@@ -18,10 +16,10 @@ function App() {
   const [activeTab, setActiveTab] = useState('structure')
   const [formData, setFormData] = useState({
     // Structure data
-    profile: 'ComFlor 60',
+    profile: 'WH-38-152',
     thickness: '1.0',
-    grade: 'S350',
-    spanType: 'Double',
+    grade: 'ASTM A653 SS Grade 50/1',
+    spanType: 'Single',
     span1: '3.5',
     span2: '3.5',
     supportWidth: '150',
@@ -130,10 +128,15 @@ function App() {
             SMI Composite Deck Calculator
           </span>
           <Space>
-            <Button size="small" icon={<FolderOpenOutlined />} ghost>File</Button>
-            <Button size="small" icon={<SettingOutlined />} ghost>Options</Button>
-            <Button size="small" icon={<BarChartOutlined />} ghost>Analysis</Button>
-            <Button size="small" icon={<QuestionCircleOutlined />} ghost>Help</Button>
+            <Button
+              icon={<ThunderboltOutlined />}
+              style={{ background: '#d32f2f', borderColor: '#d32f2f', color: '#fff', fontWeight: 600 }}
+            >
+              Generate
+            </Button>
+            <Button icon={<FilePdfOutlined />} ghost>
+              Export PDF
+            </Button>
           </Space>
         </Header>
 
