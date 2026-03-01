@@ -4,6 +4,16 @@ import {
 } from 'antd'
 import CrossSectionGraphic from '../components/CrossSectionGraphic'
 import GeneralArrangementGraphic from '../components/GeneralArrangementGraphic'
+import ProfileGraphic from '../components/ProfileGraphic'
+import profileWH from '../data/profile_WH.json'
+import profile2WH from '../data/profile_2WH.json'
+import profile3WH from '../data/profile_3WH.json'
+
+const PROFILES = {
+  'WH-38-152': profileWH,
+  '2WH-36':    profile2WH,
+  '3WH-36':    profile3WH,
+}
 
 const { Text } = Typography
 const { Panel } = Collapse
@@ -214,10 +224,16 @@ const StructureTab = ({ formData, updateFormData }) => {
 
       {/* Right Panel */}
       <div className="right-panel">
-        <Card size="small" title="Cross Section" style={{ marginBottom: 12, borderRadius: 8, boxShadow: '0 1px 3px rgba(0,0,0,0.10)' }}>
-          <div className="graphics-container">
-            <CrossSectionGraphic formData={formData} />
-          </div>
+        <Card size="small" title="Cross Section Profiles" style={{ marginBottom: 12, borderRadius: 8, boxShadow: '0 1px 3px rgba(0,0,0,0.10)' }}>
+          {Object.entries(PROFILES).map(([name, data]) => (
+            <div key={name} style={{ marginBottom: 8 }}>
+              <ProfileGraphic
+                profileName={name}
+                profileData={data}
+                slabDepthMm={parseFloat(formData.slabDepth) || 150}
+              />
+            </div>
+          ))}
         </Card>
 
         <Card size="small" title="General Arrangement" style={{ marginBottom: 12, borderRadius: 8, boxShadow: '0 1px 3px rgba(0,0,0,0.10)' }}>
