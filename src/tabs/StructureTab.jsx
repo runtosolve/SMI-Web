@@ -3,7 +3,6 @@ import {
   Divider, Row, Col, Statistic, Tag, Table, Alert
 } from 'antd'
 import CrossSectionGraphic from '../components/CrossSectionGraphic'
-import GeneralArrangementGraphic from '../components/GeneralArrangementGraphic'
 import ProfileGraphic from '../components/ProfileGraphic'
 import profileWH from '../data/profile_WH.json'
 import profile2WH from '../data/profile_2WH.json'
@@ -226,7 +225,7 @@ const StructureTab = ({ formData, updateFormData }) => {
       <div className="right-panel">
         <Card size="small" title="Cross Section Profiles" style={{ marginBottom: 12, borderRadius: 8, boxShadow: '0 1px 3px rgba(0,0,0,0.10)' }}>
           {Object.entries(PROFILES).map(([name, data]) => (
-            <div key={name} style={{ marginBottom: 8 }}>
+            <div key={name} style={{ marginBottom: 8, display: 'flex', justifyContent: 'center' }}>
               <ProfileGraphic
                 profileName={name}
                 profileData={data}
@@ -234,12 +233,6 @@ const StructureTab = ({ formData, updateFormData }) => {
               />
             </div>
           ))}
-        </Card>
-
-        <Card size="small" title="General Arrangement" style={{ marginBottom: 12, borderRadius: 8, boxShadow: '0 1px 3px rgba(0,0,0,0.10)' }}>
-          <div className="graphics-container">
-            <GeneralArrangementGraphic formData={formData} />
-          </div>
         </Card>
 
         <Card size="small" title="Errors & Warnings" style={{ marginBottom: 12, borderRadius: 8, boxShadow: '0 1px 3px rgba(0,0,0,0.10)' }}>
