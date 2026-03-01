@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { Stage, Layer, Line, Rect, Text } from 'react-konva'
+import { Stage, Layer, Line, Rect, Text, Arrow } from 'react-konva'
 
 const CANVAS_W = 468
 const CANVAS_H = 155
@@ -73,11 +73,19 @@ const ProfileGraphic = ({ profileName, profileData, slabDepthMm = 150 }) => {
         {/* Steel deck profile */}
         <Line points={pts} fill="#78909c" stroke="#37474f" strokeWidth={1.2} closed />
 
-        {/* X axis line */}
-        <Line points={[PL, axisY, PL + drawW, axisY]} stroke={AXIS_COLOR} strokeWidth={1} />
+        {/* X axis arrow */}
+        <Arrow
+          points={[PL, axisY, PL + drawW + 8, axisY]}
+          stroke={AXIS_COLOR} fill={AXIS_COLOR}
+          strokeWidth={1} pointerLength={6} pointerWidth={5}
+        />
 
-        {/* Y axis line */}
-        <Line points={[PL, PT, PL, axisY]} stroke={AXIS_COLOR} strokeWidth={1} />
+        {/* Y axis arrow */}
+        <Arrow
+          points={[PL, axisY, PL, PT - 8]}
+          stroke={AXIS_COLOR} fill={AXIS_COLOR}
+          strokeWidth={1} pointerLength={6} pointerWidth={5}
+        />
 
         {/* X ticks & labels */}
         {xTicks.map(({ val, px }) => (
