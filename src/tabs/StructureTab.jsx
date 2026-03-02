@@ -1,15 +1,12 @@
-import { useState, useEffect, useRef } from 'react'
 import {
   Card, Collapse, Form, Select, InputNumber, Space, Typography,
-  Divider, Row, Col, Statistic, Tag, Table, Alert, Spin
+  Divider, Row, Col, Statistic, Tag, Table, Alert
 } from 'antd'
-import { Stage, Layer, Image as KonvaImage } from 'react-konva'
 import CrossSectionGraphic from '../components/CrossSectionGraphic'
 import ProfileGraphic from '../components/ProfileGraphic'
 import profileWH from '../data/profile_WH.json'
 import profile2WH from '../data/profile_2WH.json'
 import profile3WH from '../data/profile_3WH.json'
-import { api } from '../api'
 
 const PROFILES = {
   'WH-38-152': profileWH,
@@ -23,21 +20,6 @@ const { Panel } = Collapse
 const LABEL_WIDTH = 170
 
 const StructureTab = ({ formData, updateFormData }) => {
-  const [plotImage, setPlotImage]   = useState(null)
-  const [plotLoading, setPlotLoading] = useState(true)
-
-  useEffect(() => {
-    api.plot()
-      .then(data => {
-        const img = new window.Image()
-        img.src = data.image
-        img.onload = () => setPlotImage(img)
-      })
-      .finally(() => setPlotLoading(false))
-  }, [])
-
-  const PLOT_W = 540
-  const PLOT_H = 240
   const resultItems = [
     { label: 'Max Unity Factor', value: formData.maxUnityFactor, color: '#1565c0' },
     { label: 'Normal Stage',     value: formData.normalStage,    color: '#2e7d32' },
@@ -241,24 +223,6 @@ const StructureTab = ({ formData, updateFormData }) => {
 
       {/* Right Panel */}
       <div className="right-panel">
-        <Card size="small" title="Plot" style={{ marginBottom: 12, borderRadius: 8, boxShadow: '0 1px 3px rgba(0,0,0,0.10)' }}>
-          {plotLoading ? (
-            <div style={{ display: 'flex', justifyContent: 'center', padding: 24 }}>
-              <Spin />
-            </div>
-          ) : (
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <Stage width={PLOT_W} height={PLOT_H}>
-                <Layer>
-                  {plotImage && (
-                    <KonvaImage image={plotImage} x={0} y={0} width={PLOT_W} height={PLOT_H} />
-                  )}
-                </Layer>
-              </Stage>
-            </div>
-          )}
-        </Card>
-
         <Card size="small" title="Cross Section Profiles" style={{ marginBottom: 12, borderRadius: 8, boxShadow: '0 1px 3px rgba(0,0,0,0.10)' }}>
           {Object.entries(PROFILES).map(([name, data]) => (
             <div key={name} style={{ marginBottom: 8, display: 'flex', justifyContent: 'center' }}>

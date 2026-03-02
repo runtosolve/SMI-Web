@@ -9,6 +9,7 @@ import StructureTab from './tabs/StructureTab'
 import LoadingTab from './tabs/LoadingTab'
 import DesignTab from './tabs/DesignTab'
 import ResultsTab from './tabs/ResultsTab'
+import PlotTab from './tabs/PlotTab'
 
 const { Header, Content } = Layout
 
@@ -79,6 +80,7 @@ function App() {
     { key: 'loading',   label: 'Loading' },
     { key: 'design',    label: 'Design' },
     { key: 'results',   label: 'Results' },
+    { key: 'plot',      label: 'Plot' },
   ]
 
   return (
@@ -164,6 +166,9 @@ function App() {
           )}
           {activeTab === 'results' && (
             <ResultsTab formData={formData} />
+          )}
+          {activeTab === 'plot' && (
+            <PlotTab />
           )}
         </Content>
       </Layout>
